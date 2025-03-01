@@ -1,4 +1,4 @@
-"beds","baths","DEN","parking","D_mkt","building_age","maint","price","new_size","new_exposure","new_ward"
+beds,baths,DEN,parking,D_mkt,building_age,maint,price,new_size,new_exposure,new_ward
 3,3,0,0,16,9,1087,1821000,3,1,0
 1,1,1,1,23,3,469,613000,1,2,0
 2,2,1,1,12,1,767,838000,1,2,0
