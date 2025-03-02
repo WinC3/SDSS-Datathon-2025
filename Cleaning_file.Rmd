@@ -37,22 +37,149 @@ ward_price <- load_data %>% group_by(ward) %>% summarise(
   average = mean(price)
 )
 
-size_price <- load_data %>% group_by(size) %>% summarise(
-  average= mean(price)
-)
+size_price <- load_data %>%
+  group_by(size) %>%
+  summarise(average = mean(price, na.rm = TRUE)) %>%
+  arrange(desc(average))
+
+beds_price <- load_data %>% group_by(beds) %>% summarise(
+  average = mean(price)
+) %>% arrange(average)
+
+maint_price <- load_data %>% group_by(maint) %>% summarise(
+  average = mean(price)
+) %>% arrange(average)
+
+baths_price <- load_data %>% group_by(baths) %>% summarise(
+  average = mean(price)
+) %>% arrange(average)
 
 size_price
 ward_price
 
 ggplot(ward_price, aes(x=ward, y=average))+
-  geom_bar(stat= "identity", fill= "skyblue", color = "black")
+  geom_bar(stat= "identity", fill= "skyblue", color = "black")+ 
+  labs(x= "Ward", y="Price")
 
 ggplot(size_price, aes(x=size, y=average))+
-  geom_bar(stat= "identity", fill= "skyblue", color = "black")
+  geom_bar(stat= "identity", fill= "skyblue", color = "black")+
+  labs(x= "Size", y="Price")+ coord_flip()
+
+ggplot(beds_price, aes(x=beds, y=average))+
+  geom_bar(stat= "identity", fill= "skyblue", color = "black")+
+  labs(x= "Beds", y="Price")
+
+ggplot(load_data, aes(x= DEN, y= price))+
+  geom_boxplot()+
+  facet_wrap(~DEN, scales = "free_y") +  # Separate y-axes for each size
+  labs(x = "Den", y = "Price") +
+  theme_minimal()
+
+ggplot(maint_price, aes(x=maint, y=average))+
+  geom_boxplot()+
+  labs(x= "Maintainence Fee", y="Price")+
+  coord_flip()
+
+ggplot(baths_price, aes(x=baths, y=average))+
+  geom_bar(stat= "identity", fill= "skyblue", color = "black")+
+  labs(x= "Baths", y="Price")
+
 ```
+```{r}
+library(ggplot2)
+library(dplyr)
+
+# Create a folder named "plots" in the working directory if it doesn't exist
+output_folder <- "plots"
+if (!dir.exists(output_folder)) {
+  dir.create(output_folder)
+}
+
+# Load and process data
+size_price <- load_data %>%
+  group_by(size) %>%
+  summarise(average = mean(price, na.rm = TRUE)) %>%
+  arrange(average)
+
+# Define a custom theme for a cleaner look
+custom_theme <- theme_minimal() +
+  theme(
+    text = element_text(family = "Arial", size = 14),
+    plot.title = element_text(face = "bold", size = 16, hjust = 0.5),
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 14),
+    panel.grid.major = element_line(color = "gray80"),
+    panel.grid.minor = element_blank(),
+    legend.position = "top"
+  )
+
+# Custom color palette
+custom_colors <- c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00", "#FFFF33", "#A65628", "#F781BF", "#999999")
+
+# === 1. Boxplot (Grouped by Size) ===
+bathplot <- ggplot(baths_price, aes(x = baths, y = average, fill = baths)) +
+  geom_col(show.legend = FALSE, alpha = 0.8) +
+  coord_flip() +  # Flip the axes for better readability
+  labs(title = "Average Price by Number of Baths", x = "Baths", y = "Average Price") +
+  custom_theme +
+  scale_fill_gradient(low = "blue", high = "red")
+
+ggsave(filename = file.path(output_folder, "boxplot.png"), plot = bathplot, width = 8, height = 5, dpi = 300)
+
+# === 2. Faceted Boxplot with Separate Axes ===
+facet_boxplot <- ggplot(load_data, aes(x = "", y = price, fill = DEN)) +
+  geom_boxplot(alpha = 0.7) +
+  facet_wrap(~DEN, scales = "free_y") +
+  labs(title = "Boxplot of Price by Den (Faceted)", x = "", y = "Price") +
+  custom_theme +
+  scale_fill_manual(values = custom_colors)
+
+ggsave(filename = file.path(output_folder, "facet_boxplot.png"), plot = facet_boxplot, width = 10, height = 6, dpi = 300)
+
+# === 3. Bar Plot with Flipped Axis ===
+barplot <- ggplot(beds_price, aes(x = beds, y = average, fill = beds)) +
+  geom_col(show.legend = FALSE, alpha = 0.8) +
+  coord_flip() +  # Flip the axes for better readability
+  labs(title = "Average Price by Number of Beds", x = "Beds", y = "Average Price") +
+  custom_theme +
+  scale_fill_gradient(low = "blue", high = "red")
+
+ggsave(filename = file.path(output_folder, "barplot.png"), plot = barplot, width = 8, height = 5, dpi = 300)
+
+# === 4. Scatter Plot of Price vs. Size ===
+scatter_plot <- ggplot(maint_price, aes(x = maint, y = average, color = maint)) +
+  geom_jitter(alpha = 0.6, size = 2) +
+  labs(title = "Scatter Plot of Price vs. Maintainence Fee", x = "Size", y = "Price") +
+  custom_theme +
+  scale_fill_gradient(low = "purple", high = "yellow")
+
+ggsave(filename = file.path(output_folder, "scatter_plot.png"), plot = scatter_plot, width = 8, height = 5, dpi = 300)
+
+# === 5. Density Plot of Prices ===
+density_plot <- ggplot(load_data, aes(x = price, fill = size)) +
+  geom_density(alpha = 0.6) +
+  labs(title = "Density Plot of Price Distribution", x = "Price", y = "Density") +
+  custom_theme +
+  scale_fill_manual(values = custom_colors)
+
+ggsave(filename = file.path(output_folder, "density_plot.png"), plot = density_plot, width = 8, height = 5, dpi = 300)
+
+# === 6. Bar Plot for Price Distribution ===
+wardplot <- ggplot(ward_price, aes(x = ward, y = average, fill = ward)) +
+  geom_col(show.legend = FALSE, alpha = 0.8) +
+  coord_flip() +  # Flip the axes for better readability
+  labs(title = "Average Price by Ward", x = "Ward", y = "Average Price") +
+  custom_theme +
+  scale_fill_manual(values = custom_colors) 
+
+ggsave(filename = file.path(output_folder, "violin_plot.png"), plot = wardplot, width = 8, height = 5, dpi = 300)
 
 
+# Print success message
+print("All plots have been saved in the 'plots' folder in the working directory.")
 
+
+```
 
 ```{r}
 load_data <- load_data %>% 

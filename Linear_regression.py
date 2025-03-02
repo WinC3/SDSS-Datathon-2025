@@ -204,11 +204,20 @@ predictions = np.array(predictions)
 # Now compare predictions to y_val
 mse = (np.mean((predictions - y_val) ** 2))
 acc = np.mean((np.abs(predictions - y_val)/y_val)) * 100
-print("Mean Squared Error on the validation set: ",mse)
+print("Mean Squared Error on the validation set: ", mse)
 print("Accuracy is: ", acc)
 
 plt.plot(j_hist)
 plt.xlabel('Iteration')
 plt.ylabel('Cost')
 plt.title('Cost History during Gradient Descent')
+plt.show()
+
+# Plotting the true values (y_val) vs the predicted values (predictions)
+plt.scatter(y_val, predictions, color='blue', label='Predicted vs True')
+plt.plot([min(y_val), max(y_val)], [min(y_val), max(y_val)], color='red', label='Regression Line')  # y=x line
+plt.xlabel('True Prices (y_val)')
+plt.ylabel('Predicted Prices')
+plt.title('True vs Predicted Prices')
+plt.legend()
 plt.show()
