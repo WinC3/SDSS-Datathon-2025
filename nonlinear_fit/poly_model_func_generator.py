@@ -1,5 +1,7 @@
 from itertools import combinations_with_replacement
 
+# script to generate model function for multivariate_fit.py
+
 N = 3 # number of terms
 vars = []
 for i in range(N):
@@ -18,6 +20,7 @@ for perm in list(combinations_with_replacement('abcde', 5)): # generate unique c
         toadd += elem
     coefs.append(toadd)
 print(coefs) # for debug
+
 with open('nonlinear_fit\poly_model_func.txt', 'w') as file:
     # function header help
     for i in range(len(combs)):

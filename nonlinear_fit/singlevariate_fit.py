@@ -14,9 +14,8 @@ mpl.rcParams['figure.dpi'] = 100
 estateData = \
 np.loadtxt('load_data.csv', skiprows=1, delimiter=',', unpack=True)
 
-def polynomial_model(x, a, b, c, d):
-                     #, e, f, g, h, i, j):
-    return a + b*x + c*x**2 + d*x**3 #+ e*x**4 + f*x**5 + g*x**6 + h*x**7 + i*x**8 + j*x**9
+def polynomial_model(x, a, b, c, d): # monovariate fit function with degree 3
+    return a + b*x + c*x**2 + d*x**3
 
 def findYErr(cov, x):
     total = 0
@@ -42,9 +41,10 @@ for i in range(len(estateData)):
     independentVar = estateData[i]
     minVal, maxVal = maxMin(independentVar)
     predDomain = np.linspace(minVal, maxVal, 1000)
-    if (i == 7): # price
+    if (i == 7): # price vs price redundant
         continue
-    valOpt, valCov = curve_fit(polynomial_model, independentVar, price)
+    valOpt, valCov = curve_fit(polynomial_model, independentVar, price) # nonlinea
+    # generate pred vs actual plots
     plt.plot(independentVar, price, ls='', marker='.', label=dataTypes[i])
     plt.errorbar(predDomain, polynomial_model(predDomain, valOpt[0], valOpt[1], valOpt[2], valOpt[3]), \
                  yerr=findYErr(valCov, independentVar), fmt='.')
