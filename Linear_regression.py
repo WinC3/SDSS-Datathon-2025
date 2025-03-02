@@ -159,20 +159,21 @@ class MultipleLinearRegression:
 
 # Load CSV into a NumPy array (excluding header)
 beds,baths,den,parking,D_mkt,building_age,maint,price,new_size,new_exposure,new_ward = (
-    np.loadtxt("load_data.csv", delimiter=",", skiprows=1, unpack=True))
+    np.loadtxt("load_data1.csv", delimiter=",", skiprows=1, unpack=True))
 
 # Stack the features (all columns except price) into a single array
-X = np.column_stack((beds, baths, den, parking, D_mkt, building_age, maint, new_size, new_exposure, new_ward))
+X = np.column_stack((beds, baths, den, maint, new_size, new_ward))
+X1, mu, sig = zscore_normalize_features(X)
 
 # The target variable (price)
 y = price
 
 # Split the data into training (80%) and validation (20%) sets
-X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_val, y_train, y_val = train_test_split(X1, y, test_size=0.2, random_state=42)
 
 l_regression = MultipleLinearRegression()
 w_in = np.ones(X.shape[1])
-w_array, b_array, j_hist = l_regression.gradient_descent(X_train, y_train, w_in, 1, 9e-7, 1000)
+w_array, b_array, j_hist = l_regression.gradient_descent(X_train, y_train, w_in, 1, 0.001, 10000)
 
 # Initialize an empty list to store predictions
 predictions = []
@@ -186,8 +187,10 @@ for x in X_val:
 predictions = np.array(predictions)
 
 # Now compare predictions to y_val
-mse = np.mean((predictions - y_val) ** 2)
+mse = (np.mean((predictions - y_val) ** 2))
+acc = np.mean((np.abs(predictions - y_val)/y_val)) * 100
 print("Mean Squared Error on the validation set: ",mse)
+print("Accuracy is: ", acc)
 
 plt.plot(j_hist)
 plt.xlabel('Iteration')
