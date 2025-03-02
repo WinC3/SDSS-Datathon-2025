@@ -18,7 +18,7 @@ price = estateData[7]
 X_data = [estateData[0], estateData[1], estateData[2], estateData[3], estateData[6], estateData[8]] # beds maint and newsize
 
 train_x = []
-train_size = int(len(estateData[0]) / 10)
+train_size = int(4*len(estateData[0]) / 5) # train on 80% of dataset
 for dataColumn in X_data:
     train_x.append(dataColumn[:train_size])
 
@@ -31,14 +31,5 @@ mse = np.mean((preds - price)**2)
 acc = np.mean((np.abs(preds - price)/price)) * 100
 print(mse, acc)
 
-# reduced-chi-squared test for quality of fit
-
-# reduced chi-squared
-def chi_reduced(data, pred, uncertainty):
-    return np.sum((data - pred / uncertainty)**2) / (data.size - 20) # degrees of freedom
-for i in range(len(valCov)):
-    print(np.sqrt(valCov[i][i]))
-#print(chi_reduced(price, preds, ))
-
 avgE = np.mean(preds - price)
-print(avgE)
+print(avgE) # average error

@@ -21,7 +21,7 @@ X_data = [estateData[0], estateData[6], estateData[8]] # beds maint and newsize.
 
 train_x = []
 val_x = []
-train_size = int(len(estateData[0]) / 10)
+train_size = int(4*len(estateData[0]) / 5)
 for dataColumn in X_data:
     train_x.append(dataColumn[:train_size])
     val_x.append(dataColumn[train_size:])
