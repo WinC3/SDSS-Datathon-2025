@@ -3,6 +3,12 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 from scipy.optimize import curve_fit
 
+def pltHelper(plt):
+    plt.xlabel('price')
+    plt.ylabel(dataTypes[i])
+    plt.legend()
+    plt.show()
+
 mpl.rcParams['figure.dpi'] = 100
 
 estateData = \
@@ -21,30 +27,31 @@ def findYErr(cov, x):
     for i in range(len(cov)):
         total += np.sqrt(cov[i][i])*x**i
 
+from typing import Tuple
+
+def maxMin(data) -> Tuple[int, int]:
+    minV = 100000000000
+    maxV = -100000000000
+    for val in data:
+        minV = min(minV, val)
+        maxV = max(maxV, val)
+    return (minV, maxV)
+
 dataTypes = ["beds", "baths", "DEN", "parking", "D_mkt", "building_age", "maint", "price", "new_size", "new_exposure", "new_ward"]
 valOpts, valCovs = [], []
 
 price = estateData[7]
 
-maxprice = 0
-minprice = 1000000000 # very big num
-for val in price:
-    maxprice = max(val, maxprice)
-    minprice = min(val, minprice)
-price_domain = np.linspace(minprice, maxprice, 1000)
-
 for i in range(len(estateData)):
-    print(i)
-    if (i == 7):
+    independentVar = estateData[i]
+    minVal, maxVal = maxMin(independentVar)
+    predDomain = np.linspace(minVal, maxVal, 1000)
+    if (i == 7): # price
         continue
-    valOpt, valCov = curve_fit(polynomial_model, price, estateData[i])
-    print(valCov)
-    plt.plot(price, estateData[i], ls='', marker='.', label=dataTypes[i])
-    plt.errorbar(price_domain, polynomial_model(price_domain, valOpt[0], valOpt[1], valOpt[2]), \
-                 yerr=findYErr(valCov, price_domain), fmt='.')#, valOpt[2], valOpt[3], valOpt[4]))
-    plt.xlabel('price')
-    plt.ylabel(dataTypes[i])
-    plt.legend()
-    plt.show()
+    valOpt, valCov = curve_fit(polynomial_model, independentVar, price)
+    plt.plot(independentVar, price, ls='', marker='.', label=dataTypes[i])
+    plt.errorbar(predDomain, polynomial_model(predDomain, valOpt[0], valOpt[1], valOpt[2]), \
+                 yerr=findYErr(valCov, independentVar), fmt='.')#, valOpt[2], valOpt[3], valOpt[4]))
+    pltHelper(plt)
     valOpts.append(valOpt)
     valCovs.append(valCovs)
