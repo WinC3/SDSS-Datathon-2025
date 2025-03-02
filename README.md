@@ -5,7 +5,7 @@ The Datathon was held over 2 days, with a main goal of analysing datasets relate
 
 Our group of 4 chose to analyse its real estate market, focusing mainly on a general solution to predict housing prices given several variables, such as the number of certain rooms, management fee costs, total size, etc.
 
-We tried 3 different approaches to a general solution. A decision-tree-based algorithm, a linear regression model, and a nonlinear model. We trained each model on 20% of the dataset, using the remaining 80% as a validation set. The decision-tree algorithm was our best model based on the average difference between predicted and actual data, with the other two models coming in close behind.
+We tried 3 different approaches to a general solution. A decision-tree-based algorithm, a linear regression model, and a nonlinear model. We trained each model on 20% of the dataset, using the remaining 80% as a validation set. The decision-tree algorithm was our best model based on the average difference between predicted and actual data. The linear regression model came closely behind, but the nonlinear fit being by the worst by being over twice as innacurate as the other two.
 
 We tried a few ways to augment our provided dataset by trying to match location data of each estate with publicly available crime rate, nearest TTC station, and other data, but ultimately decided against it given the time constraint.
 
