@@ -1,4 +1,4 @@
-a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, 
+aaaaa, aaaab, aaaac, aaaad, aaaae, aaabb, aaabc, aaabd, aaabe, aaacc, aaacd, aaace, aaadd, aaade, aaaee, aabbb, aabbc, aabbd, aabbe, aabcc, 
 x0, x1, x2, 
 valOpt[0], valOpt[1], valOpt[2], valOpt[3], valOpt[4], valOpt[5], valOpt[6], valOpt[7], valOpt[8], valOpt[9], valOpt[10], valOpt[11], valOpt[12], valOpt[13], valOpt[14], valOpt[15], valOpt[16], valOpt[17], valOpt[18], valOpt[19], 
-a*1+b*x0*1+c*x1*1+d*x2*1+e*x0*x0*1+f*x0*x1*1+g*x0*x2*1+h*x1*x1*1+i*x1*x2*1+j*x2*x2*1+k*x0*x0*x0*1+l*x0*x0*x1*1+m*x0*x0*x2*1+n*x0*x1*x1*1+o*x0*x1*x2*1+p*x0*x2*x2*1+q*x1*x1*x1*1+r*x1*x1*x2*1+s*x1*x2*x2*1+t*x2*x2*x2*1+
+aaaaa*1+aaaab*x0*1+aaaac*x1*1+aaaad*x2*1+aaaae*x0*x0*1+aaabb*x0*x1*1+aaabc*x0*x2*1+aaabd*x1*x1*1+aaabe*x1*x2*1+aaacc*x2*x2*1+aaacd*x0*x0*x0*1+aaace*x0*x0*x1*1+aaadd*x0*x0*x2*1+aaade*x0*x1*x1*1+aaaee*x0*x1*x2*1+aabbb*x0*x2*x2*1+aabbc*x1*x1*x1*1+aabbd*x1*x1*x2*1+aabbe*x1*x2*x2*1+aabcc*x2*x2*x2*1+

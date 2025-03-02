@@ -10,3 +10,5 @@ We tried 3 different approaches to a general solution. A decision-tree-based alg
 We tried a few ways to augment our provided dataset by trying to match location data of each estate with publicly available crime rate, nearest TTC station, and other data, but ultimately decided against it given the time constraint.
 
 We made a key insight into the nature of the pricing, which was that only two select variables had a significant impact on the overall price, namely the overall size of the listing and its corresponding management cost. The other variables had no significant impact on the pricing, at least by themselves. As a result, our best models only factored in 2 or 3 independent variables into the predictions.
+
+AI tool usage: ChatGPT was used throughout to help with various bits of syntax and model suggestions, but key insights were all obtained through our own implementation of each model.

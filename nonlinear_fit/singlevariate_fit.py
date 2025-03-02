@@ -4,9 +4,9 @@ import matplotlib as mpl
 from scipy.optimize import curve_fit
 
 def pltHelper(plt):
-    plt.xlabel('price')
+    plt.xlabel('price in millions')
     plt.ylabel(dataTypes[i])
-    plt.legend()
+    plt.savefig('monovariate_plots/' + dataTypes[i] + '_plot.png')
     plt.show()
 
 mpl.rcParams['figure.dpi'] = 100
@@ -14,13 +14,9 @@ mpl.rcParams['figure.dpi'] = 100
 estateData = \
 np.loadtxt('load_data.csv', skiprows=1, delimiter=',', unpack=True)
 
-def overall(x, a, b, c, d, e, f, g, h, i, j, k, l):
-    return (a + b + c + d + e + f + g + h + i + j + k + l) * x
-
-def polynomial_model(x, a, b, c):
-                     #, d, e):
-                     #, f, g, h, i, j):
-    return a + b*x + c*x**2# + d*x**3 + e*x**4 # + f*x**5 + g*x**6 + h*x**7 + i*x**8 + j*x**9
+def polynomial_model(x, a, b, c, d):
+                     #, e, f, g, h, i, j):
+    return a + b*x + c*x**2 + d*x**3 #+ e*x**4 + f*x**5 + g*x**6 + h*x**7 + i*x**8 + j*x**9
 
 def findYErr(cov, x):
     total = 0
@@ -50,8 +46,9 @@ for i in range(len(estateData)):
         continue
     valOpt, valCov = curve_fit(polynomial_model, independentVar, price)
     plt.plot(independentVar, price, ls='', marker='.', label=dataTypes[i])
-    plt.errorbar(predDomain, polynomial_model(predDomain, valOpt[0], valOpt[1], valOpt[2]), \
-                 yerr=findYErr(valCov, independentVar), fmt='.')#, valOpt[2], valOpt[3], valOpt[4]))
+    plt.errorbar(predDomain, polynomial_model(predDomain, valOpt[0], valOpt[1], valOpt[2], valOpt[3]), \
+                 yerr=findYErr(valCov, independentVar), fmt='.')
+    plt.title('Prediction plot against actual values for ' + dataTypes[i])
     pltHelper(plt)
     valOpts.append(valOpt)
     valCovs.append(valCovs)
