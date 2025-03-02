@@ -1,0 +1,109 @@
+---
+title: "SDSS Datathon 2025"
+output: 
+  pdf_document:
+    latex_engine: xelatex
+date: "2024-03-27"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(repos = c(CRAN = "https://cloud.r-project.org"))
+```
+
+```{r, echo=FALSE, include=FALSE}
+library(dplyr)
+library(knitr)
+library(tidyverse)
+library(openintro)
+library(gridExtra)
+opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+```{r}
+load_data <- read_csv("pruned-estate-data.csv")
+glimpse(load_data)
+```
+
+```{r}
+load_data <- load_data[,-((ncol(load_data) - 1):ncol(load_data))]
+load_data <- load_data[-c(1)]
+glimpse(load_data)
+
+```
+
+```{r}
+ward_price <- load_data %>% group_by(ward) %>% summarise(
+  average = mean(price)
+)
+
+size_price <- load_data %>% group_by(size) %>% summarise(
+  average= mean(price)
+)
+
+size_price
+ward_price
+
+ggplot(ward_price, aes(x=ward, y=average))+
+  geom_bar(stat= "identity", fill= "skyblue", color = "black")
+
+ggplot(size_price, aes(x=size, y=average))+
+  geom_bar(stat= "identity", fill= "skyblue", color = "black")
+```
+
+
+
+
+```{r}
+load_data <- load_data %>% 
+  mutate(across(c(DEN), ~ as.integer(ifelse(. == "YES", 1, ifelse(. == "No", 0, .)))))
+
+load_data <- load_data %>% 
+  mutate(across(c(parking), ~ as.integer(ifelse(. == "Yes", 1, ifelse(. == "N", 0, .)))))
+
+# Mutate the data frame and create a new column for categories
+load_data <- load_data %>%
+  mutate(new_size = case_when(
+    size == "0-499 sqft" ~ 0,
+    size == "500-999 sqft" ~ 500,
+    size == "1000-1499 sqft" ~ 1000,
+    size == "1500-1999 sqft" ~ 1500,
+    size == "2000-2499 sqft" ~ 2000,
+    size == "2500-2999 sqft" ~ 2500,
+    size == "3000-3499 sqft" ~ 3000,
+    size == "5500-3999 sqft" ~ 3500,
+    size == "4000+ sqft" ~ 4000,
+    TRUE ~ NA_real_  # In case there's any unmatched size
+  ))
+
+load_data <- load_data %>%
+  mutate(new_exposure = case_when(
+    exposure == "S" ~ 0,
+    exposure == "No" ~ 1,
+    exposure == "We" ~ 2,
+    exposure == "E" ~ 3,
+    TRUE ~ NA_real_
+))
+
+
+load_data <- load_data %>%
+  mutate(new_ward = case_when(
+    ward == "W13" ~ 0,
+    ward == "W10" ~ 1,
+    ward == "W11" ~ 2,
+    TRUE ~ NA_real_
+))
+
+load_data <- load_data[-c(1,5,7)]
+
+load_data
+``` 
+
+
+
+```{r}
+# Save the dataset as a CSV file
+write.csv(load_data, "load_data1.csv", row.names = FALSE)
+```
+
+
