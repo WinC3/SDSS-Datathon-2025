@@ -7,13 +7,27 @@ for i in range(N):
     vars.append("x" + str(i))
 
 terms = []
-degree = N
-combs = list(combinations_with_replacement(vars, degree))
+degree = N + 1
+combs = []
+for deg in range(degree):
+    combs += list(combinations_with_replacement(vars, deg))
+valOptName = 'valOpt'
 
 with open('poly_model_func.txt', 'w') as file:
     # function header help
+    for i in range(97, 97 + len(combs)):
+        file.write(chr(i))
+        file.write(', ')
+    file.write('\n')
+    # unpack independent variables help
     for var in vars:
         file.write(var)
+        file.write(', ')
+    file.write('\n')
+    # valOpt help
+    for i in range(97, 97 + len(combs)):
+        file.write(valOptName)
+        file.write('[' + str(i - 97) + ']')
         file.write(', ')
     file.write('\n')
     # combinations
