@@ -89,7 +89,7 @@ ggplot(baths_price, aes(x=baths, y=average))+
 library(ggplot2)
 library(dplyr)
 
-# Create a folder named "plots" in the working directory if it doesn't exist
+# Create a folder named plots in the working directory
 output_folder <- "plots"
 if (!dir.exists(output_folder)) {
   dir.create(output_folder)
@@ -116,7 +116,7 @@ custom_theme <- theme_minimal() +
 # Custom color palette
 custom_colors <- c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00", "#FFFF33", "#A65628", "#F781BF", "#999999")
 
-# === 1. Boxplot (Grouped by Size) ===
+# === 1. Boxplot (Grouped by Size)
 bathplot <- ggplot(baths_price, aes(x = baths, y = average, fill = baths)) +
   geom_col(show.legend = FALSE, alpha = 0.8) +
   coord_flip() +  # Flip the axes for better readability
@@ -126,7 +126,7 @@ bathplot <- ggplot(baths_price, aes(x = baths, y = average, fill = baths)) +
 
 ggsave(filename = file.path(output_folder, "boxplot.png"), plot = bathplot, width = 8, height = 5, dpi = 300)
 
-# === 2. Faceted Boxplot with Separate Axes ===
+# === 2. Faceted Boxplot with Separate Axes
 facet_boxplot <- ggplot(load_data, aes(x = "", y = price, fill = DEN)) +
   geom_boxplot(alpha = 0.7) +
   facet_wrap(~DEN, scales = "free_y") +
@@ -136,7 +136,7 @@ facet_boxplot <- ggplot(load_data, aes(x = "", y = price, fill = DEN)) +
 
 ggsave(filename = file.path(output_folder, "facet_boxplot.png"), plot = facet_boxplot, width = 10, height = 6, dpi = 300)
 
-# === 3. Bar Plot with Flipped Axis ===
+# === 3. Bar Plot with Flipped Axis
 barplot <- ggplot(beds_price, aes(x = beds, y = average, fill = beds)) +
   geom_col(show.legend = FALSE, alpha = 0.8) +
   coord_flip() +  # Flip the axes for better readability
@@ -146,7 +146,7 @@ barplot <- ggplot(beds_price, aes(x = beds, y = average, fill = beds)) +
 
 ggsave(filename = file.path(output_folder, "barplot.png"), plot = barplot, width = 8, height = 5, dpi = 300)
 
-# === 4. Scatter Plot of Price vs. Size ===
+# === 4. Scatter Plot of Price vs. Size
 scatter_plot <- ggplot(maint_price, aes(x = maint, y = average, color = maint)) +
   geom_jitter(alpha = 0.6, size = 2) +
   labs(title = "Scatter Plot of Price vs. Maintainence Fee", x = "Size", y = "Price") +
@@ -155,7 +155,7 @@ scatter_plot <- ggplot(maint_price, aes(x = maint, y = average, color = maint)) 
 
 ggsave(filename = file.path(output_folder, "scatter_plot.png"), plot = scatter_plot, width = 8, height = 5, dpi = 300)
 
-# === 5. Density Plot of Prices ===
+# === 5. Density Plot of Prices
 density_plot <- ggplot(load_data, aes(x = price, fill = size)) +
   geom_density(alpha = 0.6) +
   labs(title = "Density Plot of Price Distribution", x = "Price", y = "Density") +
@@ -164,7 +164,7 @@ density_plot <- ggplot(load_data, aes(x = price, fill = size)) +
 
 ggsave(filename = file.path(output_folder, "density_plot.png"), plot = density_plot, width = 8, height = 5, dpi = 300)
 
-# === 6. Bar Plot for Price Distribution ===
+# === 6. Bar Plot for Price Distribution
 wardplot <- ggplot(ward_price, aes(x = ward, y = average, fill = ward)) +
   geom_col(show.legend = FALSE, alpha = 0.8) +
   coord_flip() +  # Flip the axes for better readability
