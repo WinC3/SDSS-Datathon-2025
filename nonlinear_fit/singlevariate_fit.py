@@ -4,8 +4,8 @@ import matplotlib as mpl
 from scipy.optimize import curve_fit
 
 def pltHelper(plt):
-    plt.xlabel('price in millions')
-    plt.ylabel(dataTypes[i])
+    plt.xlabel(dataTypes[i])
+    plt.ylabel('price in millions')
     plt.savefig('monovariate_plots/' + dataTypes[i] + '_plot.png')
     plt.show()
 
