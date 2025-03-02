@@ -26,6 +26,7 @@ def zscore_normalize_features(X):
 
     return X_norm, mu, sigma
 
+
 class MultipleLinearRegression:
 
     def __init__(self):
@@ -65,38 +66,48 @@ class MultipleLinearRegression:
         p = np.dot(x, w) + b
         return p
 
-    def compute_cost(self, X, y, w, b) -> float:
+    def compute_cost_linear_reg(self, X, y, w, b, lambda_=1):
         """
-        compute cost
+        Computes the cost over all examples
         Args:
-        X (ndarray (m,n)): Data, m examples with n features
-        y (ndarray (m,)) : target values
-        w (ndarray (n,)) : model parameters
-        b (scalar)       : model parameter
-
+          X (ndarray (m,n): Data, m examples with n features
+          y (ndarray (m,)): target values
+          w (ndarray (n,)): model parameters
+          b (scalar)      : model parameter
+          lambda_ (scalar): Controls amount of regularization
         Returns:
-        cost (scalar): cost
+          total_cost (scalar):  cost
         """
+
         m = X.shape[0]
-        cost = 0.0
+        n = len(w)
+        cost = 0.
         for i in range(m):
-            f_wb_i = np.dot(X[i], w) + b  # (n,)(n,) = scalar (see np.dot)
+            f_wb_i = np.dot(X[i], w) + b  # (n,)(n,)=scalar, see np.dot
             cost = cost + (f_wb_i - y[i]) ** 2  # scalar
         cost = cost / (2 * m)  # scalar
-        return cost
 
-    def compute_gradient(self, X, y, w, b) -> (float, float):
+        reg_cost = 0
+        for j in range(n):
+            reg_cost += (w[j] ** 2)  # scalar
+        reg_cost = (lambda_ / (2 * m)) * reg_cost  # scalar
+
+        total_cost = cost + reg_cost  # scalar
+        return total_cost  # scalar
+
+    def compute_gradient_linear_reg(self, X, y, w, b, lambda_):
         """
         Computes the gradient for linear regression
         Args:
-        X (ndarray (m,n)): Data, m examples with n features
-        y (ndarray (m,)) : target values
-        w (ndarray (n,)) : model parameters
-        b (scalar)       : model parameter
+          X (ndarray (m,n): Data, m examples with n features
+          y (ndarray (m,)): target values
+          w (ndarray (n,)): model parameters
+          b (scalar)      : model parameter
+          lambda_ (scalar): Controls amount of regularization
 
         Returns:
-        dj_dw (ndarray (n,)): The gradient of the cost w.r.t. the parameters w.
-        dj_db (scalar):       The gradient of the cost w.r.t. the parameter b.
+          dj_dw (ndarray (n,)): The gradient of the cost w.r.t. the parameters w.
+          dj_db (scalar):       The gradient of the cost w.r.t. the parameter b.
         """
         m, n = X.shape  # (number of examples, number of features)
         dj_dw = np.zeros((n,))
@@ -110,9 +121,12 @@ class MultipleLinearRegression:
         dj_dw = dj_dw / m
         dj_db = dj_db / m
 
+        for j in range(n):
+            dj_dw[j] = dj_dw[j] + (lambda_ / m) * w[j]
+
         return dj_db, dj_dw
 
-    def gradient_descent(self, X, y, w_in, b_in, alpha, num_iters) -> (float, float, list):
+    def gradient_descent(self, X, y, w_out, b_in, alpha, num_iters, lambda_) -> (float, float, list):
         """
         Performs batch gradient descent to learn w and b. Updates w and b by taking
         num_iters gradient steps with learning rate alpha
@@ -134,13 +148,13 @@ class MultipleLinearRegression:
 
         # An array to store cost J and w's at each iteration primarily for graphing later
         J_history = []
-        w = copy.deepcopy(w_in)  # avoid modifying global w within function
+        w = copy.deepcopy(w_out)  # avoid modifying global w within function
         b = b_in
 
         for i in range(num_iters):
 
             # Calculate the gradient and update the parameters
-            dj_db, dj_dw = self.compute_gradient(X, y, w, b)  ##None
+            dj_db, dj_dw = self.compute_gradient_linear_reg(X, y, w, b, lambda_)  ##None
 
             # Update Parameters using w, b, alpha and gradient
             w = w - alpha * dj_dw  ##None
@@ -148,7 +162,7 @@ class MultipleLinearRegression:
 
             # Save cost J at each iteration
             if i < 100000:  # prevent resource exhaustion
-                J_history.append(self.compute_cost(X, y, w, b))
+                J_history.append(self.compute_cost_linear_reg(X, y, w, b, lambda_))
 
             # Print cost every at intervals 10 times or as many iterations if < 10
             if i % math.ceil(num_iters / 10) == 0:
@@ -158,11 +172,11 @@ class MultipleLinearRegression:
 
 
 # Load CSV into a NumPy array (excluding header)
-beds,baths,den,parking,D_mkt,building_age,maint,price,new_size,new_exposure,new_ward = (
+beds, baths, den, parking, D_mkt, building_age, maint, price, new_size, new_exposure, new_ward = (
     np.loadtxt("load_data1.csv", delimiter=",", skiprows=1, unpack=True))
 
 # Stack the features (all columns except price) into a single array
-X = np.column_stack((beds, baths, den, maint, new_size, new_ward))
+X = np.column_stack((beds, baths, den, parking, D_mkt, building_age, maint, new_size, new_exposure, new_ward))
 X1, mu, sig = zscore_normalize_features(X)
 
 # The target variable (price)
@@ -173,7 +187,8 @@ X_train, X_val, y_train, y_val = train_test_split(X1, y, test_size=0.2, random_s
 
 l_regression = MultipleLinearRegression()
 w_in = np.ones(X.shape[1])
-w_array, b_array, j_hist = l_regression.gradient_descent(X_train, y_train, w_in, 1, 0.001, 10000)
+
+w_array, b_array, j_hist = l_regression.gradient_descent(X_train, y_train, w_in, 1, 0.005, 10000, 0.01)
 
 # Initialize an empty list to store predictions
 predictions = []
